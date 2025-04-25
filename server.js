@@ -1,7 +1,8 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const axios = require('axios');
 const cron = require('node-cron');
+const chromium = require('chrome-aws-lambda');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -45,16 +46,18 @@ const warmProductCache = async () => {
     }
   }
 
-  // Launch Puppeteer using bundled Chromium
+  // Launch Puppeteer using chrome-aws-lambda
   const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: true,
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    userDataDir: './tmp', // Temporary directory for user data
   });
 
   const page = await browser.newPage();
 
   for (const slug of slugs) {
-    const url = `https://winters.lat/product/${slug}`;
+    const url = `https://winters.lat/productos/${slug}`;
     try {
       const response = await page.goto(url, { waitUntil: 'networkidle2' });
       const headers = response.headers();
@@ -72,7 +75,7 @@ const warmProductCache = async () => {
   console.log("🧊 Done warming cache.");
 };
 
-// Schedule to run every 10 minutes
+// Schedule to run every 15 minutes
 cron.schedule('*/15 * * * *', async () => {
   console.log("⏰ Running scheduled cache warmer...");
   try {
