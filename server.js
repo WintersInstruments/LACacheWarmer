@@ -108,7 +108,7 @@ app.get('/warm-cache', async (req, res) => {
 });
 
 // Set up a cron job to run every hour
-cron.schedule('0 * * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
   console.log('⏰ Cache warming job running...');
   try {
     await warmProductCache();
