@@ -4,22 +4,30 @@
 apt-get update
 apt-get install -y wget ca-certificates curl unzip
 
-# Set the version of Chromium
-CHROMIUM_VERSION="chrome-linux"
+# Define download URL and destination directory
+DOWNLOAD_URL="https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F1452111%2Fchrome-linux.zip?generation=1745622558646601&alt=media"
+DEST_DIR="/opt/render/project/.chromium"
 
-# Download and extract Chromium
+# Download Chromium
 echo "Starting Chromium download..."
-wget https://storage.googleapis.com/chromium-browser-snapshots/Windows/901912/chrome-linux.zip
-echo "Download finished, extracting..."
+wget "$DOWNLOAD_URL" -O /opt/render/project/chrome-linux.zip
 
-unzip chrome-linux.zip -d /opt/render/project/.chromium/
+# Check if download was successful
+if [ $? -eq 0 ]; then
+  echo "Download finished, extracting..."
+  unzip /opt/render/project/chrome-linux.zip -d "$DEST_DIR"
 
-# Check if extraction was successful
-if [ -f "/opt/render/project/.chromium/chrome-linux/chrome" ]; then
-  echo "Chromium extracted successfully to /opt/render/project/.chromium/chrome-linux/chrome"
+  # Check if extraction was successful
+  if [ -f "$DEST_DIR/chrome-linux/chrome" ]; then
+    echo "Chromium extracted successfully to $DEST_DIR/chrome-linux/chrome"
+  else
+    echo "Chromium extraction failed!"
+    exit 1
+  fi
+
+  # Clean up the zip file after extraction
+  rm /opt/render/project/chrome-linux.zip
 else
-  echo "Chromium extraction failed!"
+  echo "Failed to download Chromium. Exiting..."
+  exit 1
 fi
-
-# Clean up the zip file
-rm chrome-linux.zip
