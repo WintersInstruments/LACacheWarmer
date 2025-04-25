@@ -7,7 +7,8 @@
     "start": "node index.js",
     "warm-cache": "node warmCache.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "./install-chromium.sh"
   },
   "dependencies": {
     "axios": "^1.0.0",
