@@ -69,7 +69,20 @@ const warmProductCache = async () => {
     request.continue({ headers: modifiedHeaders });
   });
 
-  // Step 4: Loop through all slugs and warm the cache by visiting product pages
+  // Step 4: Monitor responses for Cloudflare and XCache headers
+  page.on('response', (response) => {
+    const cfStatus = response.headers()['cf-status'];
+    const xCache = response.headers()['x-cache'];
+
+    if (cfStatus) {
+      console.log(`CF-Status: ${cfStatus} for ${response.url()}`);
+    }
+    if (xCache) {
+      console.log(`X-Cache: ${xCache} for ${response.url()}`);
+    }
+  });
+
+  // Step 5: Loop through all slugs and warm the cache by visiting product pages
   const promises = allSlugs.map(async (slug, i) => {
     const id = allIds[i];
     const productUrl = `https://www.winters.lat/productos/${slug}`;
@@ -90,7 +103,7 @@ const warmProductCache = async () => {
   // Wait for all product pages to be visited
   await Promise.all(promises);
 
-  // Step 5: Close the browser after warming cache for all products
+  // Step 6: Close the browser after warming cache for all products
   await browser.close();
 
   console.log("✅ All cache warming tasks are complete.");
@@ -107,18 +120,18 @@ app.get('/warm-cache', async (req, res) => {
   }
 });
 
-// Set up a cron job to run every hour
+// Set up a cron job to run every 10 minutes
 cron.schedule('*/10 * * * *', async () => {
   console.log('⏰ Cache warming job running...');
   try {
     await warmProductCache();
     console.log("✅ Cache warming complete.");
   } catch (error) {
-    console.error("Error running scheduled cache warmer:", error);
+    console.error("Error during cron job:", error);
   }
 });
 
-// Start Express server
+// Start the Express server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
