@@ -107,3 +107,6 @@ cron.schedule("0 */3 * * *", async () => {
     console.error("💥 Error running scheduled cache warmer:", err);
   }
 });
+
+// START IMMEDIATELY FOR TEXTING
+warmProductCache()
