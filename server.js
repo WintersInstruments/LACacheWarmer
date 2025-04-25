@@ -52,7 +52,6 @@ const warmProductCache = async () => {
     headless: true, // run in headless mode (no GUI)
     executablePath: '/usr/bin/chromium',  // Path for Chromium installed in Render  // Adjust the path for Chrome/Chromium on your machine
     // On Linux, it might be something like: '/usr/bin/chromium-browser'
-    // On macOS, it might be something like: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
   });
 
   const page = await browser.newPage();
