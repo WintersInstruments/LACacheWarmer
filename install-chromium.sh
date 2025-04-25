@@ -5,13 +5,21 @@ apt-get update
 apt-get install -y wget ca-certificates curl unzip
 
 # Set the version of Chromium
-CHROMIUM_VERSION="901912" # You can change this to the version you need
+CHROMIUM_VERSION="chrome-linux"
 
-# Download and extract Chromium for Linux
-wget https://storage.googleapis.com/chromium-browser-snapshots/Linux/$CHROMIUM_VERSION/chrome-linux.zip -O /tmp/chrome-linux.zip
+# Download and extract Chromium
+echo "Starting Chromium download..."
+wget https://storage.googleapis.com/chromium-browser-snapshots/Windows/901912/chrome-linux.zip
+echo "Download finished, extracting..."
 
-# Unzip the downloaded file into the correct directory
-unzip /tmp/chrome-linux.zip -d /opt/render/project/.chromium/
+unzip chrome-linux.zip -d /opt/render/project/.chromium/
+
+# Check if extraction was successful
+if [ -f "/opt/render/project/.chromium/chrome-linux/chrome" ]; then
+  echo "Chromium extracted successfully to /opt/render/project/.chromium/chrome-linux/chrome"
+else
+  echo "Chromium extraction failed!"
+fi
 
 # Clean up the zip file
-rm /tmp/chrome-linux.zip
+rm chrome-linux.zip
