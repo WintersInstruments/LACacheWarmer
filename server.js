@@ -6,14 +6,6 @@ const path = require("path"); // Import path module
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
   "cfd13620d7a93c932643d3d1221b56328c1da5a98e3600a234ad9a0d92fc0bc0";
-const getCatalogsBrochureQuery =
-  "9a1281d91957d56c729efa6e6c7517f2450f1b86f598fe8793ec35d080680c41";
-const getManualsIDquery =
-  "58240fe0c6a2ccb6a6fb897c5479575ab64bf423f8d2eedd464ba6817d3af9ff";
-const getEventsIDquery =
-  "9661201502b31a09d1d48ba9fc13923a05b3c17907cb3b7592f2f5844589490f";
-const getProjectReferencesquery =
-  "0402adbd5635adfc6ab5b9d16e344a92a5b47c7c00ccf1045f73004a90ee63d3";
 
 const otherPagesToBeWarmed = async (page) => {
   const pagesToWarm = [
@@ -113,7 +105,10 @@ const warmProductCache = async () => {
       });
       console.log(`✅ Cache warmed for product: ${productUrl}`);
     } catch (err) {
-      console.error(`Error warming cache for product ${productUrl}:`, err.message);
+      console.error(
+        `Error warming cache for product ${productUrl}:`,
+        err.message
+      );
     }
   }
 
