@@ -73,7 +73,7 @@ const warmProductCache = async () => {
 };
 
 // Schedule to run every 10 minutes
-cron.schedule('*/10 * * * *', async () => {
+cron.schedule('*/15 * * * *', async () => {
   console.log("⏰ Running scheduled cache warmer...");
   try {
     await warmProductCache();
