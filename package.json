@@ -7,15 +7,14 @@
     "start": "node index.js",
     "warm-cache": "node warmCache.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "./install-chromium.sh"
+    "postinstall": "./install-chromium.sh",  
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "axios": "^1.0.0",
     "chrome-aws-lambda": "^10.1.0",
     "node-cron": "^3.0.0",
-    "puppeteer": "^24.7.2",
-    "puppeteer-core": "^10.4.0"
+    "puppeteer-core": "^10.4.0"  
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
