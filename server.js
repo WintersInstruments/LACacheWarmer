@@ -48,13 +48,11 @@ const warmProductCache = async () => {
 
   console.log(`✅ Found ${allIds.length} products. Warming cache...`);
 
-  // Define the path for Chromium binary installed by install-chromium.sh
-  const chromiumPath = path.join(__dirname, '.chromium/chrome-linux/chrome');  // Update the path as per your install script
 
   // Launch Puppeteer with the correct executablePath
   const browser = await puppeteer.launch({
-    headless: true, // run in headless mode (no GUI)
-    executablePath: chromiumPath,  // Use the correct path for the Chromium binary
+    headless: true,
+    executablePath: process.env.CHROME_PATH, // <- Use the env variable!
   });
 
   const page = await browser.newPage();
