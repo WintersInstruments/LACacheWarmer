@@ -99,7 +99,7 @@ const warmProductCache = async () => {
 };
 
 // Run cache warmer every 1 minute
-cron.schedule("0 */3 * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   console.log("⏰ Running scheduled cache warmer...");
   try {
     await warmProductCache();
@@ -109,4 +109,4 @@ cron.schedule("0 */3 * * *", async () => {
 });
 
 // START IMMEDIATELY FOR TEXTING
-warmProductCache()
+warmProductCache();
