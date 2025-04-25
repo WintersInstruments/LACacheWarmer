@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer-core'); // Keep puppeteer-core
 const axios = require('axios');
 const cron = require('node-cron');
+const path = require('path');  // Import path module
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const queryId = "cfd13620d7a93c932643d3d1221b56328c1da5a98e3600a234ad9a0d92fc0bc0"; 
@@ -47,11 +48,13 @@ const warmProductCache = async () => {
 
   console.log(`✅ Found ${allIds.length} products. Warming cache...`);
 
-  // Launch Puppeteer with executablePath pointing to the downloaded Chromium or Chrome binary
+  // Define the path for Chromium binary installed by install-chromium.sh
+  const chromiumPath = path.join(__dirname, '.chromium/chrome-linux/chrome');  // Update the path as per your install script
+
+  // Launch Puppeteer with the correct executablePath
   const browser = await puppeteer.launch({
     headless: true, // run in headless mode (no GUI)
-    executablePath: '/usr/bin/chromium',  // Path for Chromium installed in Render  // Adjust the path for Chrome/Chromium on your machine
-    // On Linux, it might be something like: '/usr/bin/chromium-browser'
+    executablePath: chromiumPath,  // Use the correct path for the Chromium binary
   });
 
   const page = await browser.newPage();
