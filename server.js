@@ -22,7 +22,7 @@ const otherPagesToBeWarmed = async (page) => {
         console.log(`🚀 Visiting page: ${url}`);
         await page.goto(url, {
           waitUntil: "networkidle2",
-          timeout: 120000, // 120 seconds timeout
+          timeout: 10000 // 10 seconds timeout
         });
         console.log(`✅ Cache warmed for page: ${url}`);
       } catch (err) {
@@ -101,7 +101,7 @@ const warmProductCache = async () => {
       console.log(`🚀 Visiting product page: ${productUrl}`);
       await page.goto(productUrl, {
         waitUntil: "networkidle2",
-        timeout: 120000, // 120 seconds timeout
+        timeout: 10000 // 10 seconds timeout
       });
       console.log(`✅ Cache warmed for product: ${productUrl}`);
     } catch (err) {
@@ -123,8 +123,8 @@ cron.schedule("0 */6 * * *", () => {
 });
 
 // EXECUTE IMMEDATLEY FOR TESTING
-(async () => {
-  console.log("Executing immediately for testing...");
-  await warmProductCache();
-  await otherPagesToBeWarmed();
-})();
+// (async () => {
+//   console.log("Executing immediately for testing...");
+//   await warmProductCache();
+//   await otherPagesToBeWarmed();
+// })();
