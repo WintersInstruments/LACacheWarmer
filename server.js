@@ -7,6 +7,14 @@ const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
   "cfd13620d7a93c932643d3d1221b56328c1da5a98e3600a234ad9a0d92fc0bc0";
 
+// Add a simple route to make sure the server is responding on the specified port
+app.get("/", (req, res) => {
+  res.send("Cache Warmer Service is Running!");
+});
+
+// Set the port dynamically using environment variable or default to 3000 for local testing
+
+const PORT = process.env.PORT || 3000;  
 const otherPagesToBeWarmed = async (page) => {
   const pagesToWarm = [
     "https://www.winters.lat/productos/eventos",
@@ -123,8 +131,8 @@ cron.schedule("0 */6 * * *", () => {
 });
 
 // EXECUTE IMMEDATLEY FOR TESTING
-// (async () => {
-//   console.log("Executing immediately for testing...");
-//   await warmProductCache();
-//   await otherPagesToBeWarmed();
-// })();
+(async () => {
+  console.log("Executing immediately for testing...");
+  await warmProductCache();
+  await otherPagesToBeWarmed();
+})();
