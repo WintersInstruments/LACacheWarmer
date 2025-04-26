@@ -106,8 +106,8 @@ const warmProductCache = async () => {
   for (let i = 0; i < allIds.length; i++) {
     const id = allIds[i];
     const slug = allSlugs[i];
+    const productUrl = `https://www.winters.lat/productos/${slug}`;
     try {
-      const productUrl = `https://www.winters.lat/productos/${slug}`;
       console.log(`🚀 Visiting product page: ${productUrl}`);
       await page.goto(productUrl, {
         waitUntil: "networkidle2",
