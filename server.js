@@ -1,7 +1,9 @@
 const puppeteer = require("puppeteer-core"); // Keep puppeteer-core
 const axios = require("axios");
 const cron = require("node-cron");
+const express = require("express"); // Import Express
 const path = require("path"); // Import path module
+const app = express();
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
@@ -14,7 +16,7 @@ app.get("/", (req, res) => {
 
 // Set the port dynamically using environment variable or default to 3000 for local testing
 
-const PORT = process.env.PORT || 3000;  
+const PORT = process.env.PORT || 3000;
 const otherPagesToBeWarmed = async (page) => {
   const pagesToWarm = [
     "https://www.winters.lat/productos/eventos",
@@ -30,7 +32,7 @@ const otherPagesToBeWarmed = async (page) => {
         console.log(`🚀 Visiting page: ${url}`);
         await page.goto(url, {
           waitUntil: "networkidle2",
-          timeout: 10000 // 10 seconds timeout
+          timeout: 10000, // 10 seconds timeout
         });
         console.log(`✅ Cache warmed for page: ${url}`);
       } catch (err) {
@@ -109,7 +111,7 @@ const warmProductCache = async () => {
       console.log(`🚀 Visiting product page: ${productUrl}`);
       await page.goto(productUrl, {
         waitUntil: "networkidle2",
-        timeout: 10000 // 10 seconds timeout
+        timeout: 10000, // 10 seconds timeout
       });
       console.log(`✅ Cache warmed for product: ${productUrl}`);
     } catch (err) {
