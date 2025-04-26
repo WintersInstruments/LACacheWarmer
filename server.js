@@ -32,7 +32,7 @@ const otherPagesToBeWarmed = async (page) => {
         console.log(`🚀 Visiting page: ${url}`);
         await page.goto(url, {
           waitUntil: "networkidle2",
-          timeout: 10000, // 10 seconds timeout
+          timeout: 20000, // 10 seconds timeout
         });
         console.log(`✅ Cache warmed for page: ${url}`);
       } catch (err) {
@@ -111,7 +111,7 @@ const warmProductCache = async () => {
       console.log(`🚀 Visiting product page: ${productUrl}`);
       await page.goto(productUrl, {
         waitUntil: "networkidle2",
-        timeout: 10000, // 10 seconds timeout
+        timeout: 20000, // 10 seconds timeout
       });
       console.log(`✅ Cache warmed for product: ${productUrl}`);
     } catch (err) {
