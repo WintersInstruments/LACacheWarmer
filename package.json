@@ -7,15 +7,13 @@
     "start": "node index.js",
     "warm-cache": "node warmCache.js",
     "dev": "nodemon index.js",
-    "postinstall": "./install-chromium.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@sparticuz/chromium": "^133.0.0",
-    "axios": "^1.9.0",
+    "axios": "^1.0.0",
     "chrome-aws-lambda": "^10.1.0",
     "express": "^5.1.0",
-    "node-cron": "^3.0.3",
+    "node-cron": "^3.0.0",
     "puppeteer-core": "^10.4.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"
