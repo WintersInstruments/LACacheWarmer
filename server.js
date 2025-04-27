@@ -106,10 +106,12 @@ const warmProductCache = async () => {
 
   console.log(`✅ Found ${allIds.length} products. Warming cache...`);
 
-  const chromiumPath = path.join(
-    process.env.GITHUB_WORKSPACE,
-    "chromium/chrome-linux/chrome"
-  );
+  // const chromiumPath = path.join(
+  //   process.env.GITHUB_WORKSPACE,
+  //   "chromium/chrome-linux/chrome"
+  // );
+
+  const chromiumPath = "/opt/render/project/.chromium/chrome-linux/chrome"; 
 
   // Launch Puppeteer with stealth plugin
   const browser = await puppeteerExtra.launch({
