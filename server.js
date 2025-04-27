@@ -169,7 +169,7 @@ const warmProductCache = async () => {
 // Setup cron job to run the cache-warming function every 6 hours
 cron.schedule("0 */6 * * *", async () => {
   console.log("⏰ Running cache warming job...");
-  const browser = await puppeteerExtra.launch({
+  const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
