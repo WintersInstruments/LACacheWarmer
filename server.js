@@ -4,6 +4,7 @@ const puppeteerExtraPluginStealth = require("puppeteer-extra-plugin-stealth");
 const axios = require("axios");
 const cron = require("node-cron");
 const path = require("path");
+const express = require("express");
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
@@ -109,7 +110,7 @@ const warmProductCache = async () => {
     process.env.GITHUB_WORKSPACE,
     "chromium/chrome-linux/chrome"
   );
-  
+
   // Launch Puppeteer with stealth plugin
   const browser = await puppeteerExtra.launch({
     headless: true,
@@ -126,31 +127,64 @@ const warmProductCache = async () => {
       const modifiedHeaders = Object.assign({}, request.headers(), {
         "Cache-Control":
           "public, max-age=300, s-maxage=300, stale-while-revalidate=999999999999999999999999", // Cache-Control header
+        Vary: "Origin, Accept-Encoding", // Vary header
         Referer: "https://www.winters.lat", // Referer header
+        Origin: "https://www.winters.lat", // Origin header
       });
       request.continue({ headers: modifiedHeaders });
     } else {
-      request.continue(); // Continue without modifying headers for other requests
+      request.continue(); // Continue with the original headers
     }
   });
 
-  // Warm cache for each product slug
-  for (const slug of allSlugs) {
+  // Warm each product's page (in a loop)
+  for (let i = 0; i < allSlugs.length; i++) {
+    const productSlug = allSlugs[i];
     try {
-      await page.goto(`https://www.winters.lat/productos/${slug}`, {
-        waitUntil: "networkidle2",
-        timeout: 20000,
+      await page.goto(`https://www.winters.lat/producto/${productSlug}`, {
+        waitUntil: "networkidle2", // Ensure that the page finishes loading
+        timeout: 20000, // Timeout after 20 seconds
       });
-      console.log(`✅ Cache warmed for product: ${slug}`);
+      console.log(`✅ Cache warmed for product: ${productSlug}`);
     } catch (err) {
-      console.error(`Error warming cache for product ${slug}:`, err.message);
+      console.error(`Error warming cache for product ${productSlug}:`, err.message);
     }
-
-    // Add a 2-second interval between requests
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
   }
 
   await browser.close();
+  console.log("✅ Cache warming process finished!");
 };
 
-module.exports = { warmProductCache, otherPagesToBeWarmed };
+// Setup cron job to run the cache-warming function every 6 hours
+cron.schedule("0 */6 * * *", async () => {
+  console.log("⏰ Running cache warming job...");
+  const browser = await puppeteerExtra.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+  const page = await browser.newPage();
+  
+  await otherPagesToBeWarmed(page); // Warm other pages
+  await warmProductCache(); // Warm product cache
+  
+  await browser.close();
+});
+
+// Create an Express server to keep the process alive
+const app = express();
+app.get("/", (req, res) => res.send("Cache Warmer is running!"));
+app.listen(3000, () => console.log("Server is running on port 3000"));
+
+// Call the warming functions immediately for testing
+(async () => {
+  const browser = await puppeteerExtra.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+  const page = await browser.newPage();
+  
+  await otherPagesToBeWarmed(page); // Warm other pages
+  await warmProductCache(); // Warm product cache
+  
+  await browser.close();
+})();
