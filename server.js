@@ -13,6 +13,7 @@ const allProductsQuery =
 
 // Apply the stealth plugin to puppeteer-extra
 puppeteerExtra.use(puppeteerExtraPluginStealth());
+console.log(await chromium.executablePath())
 
 // Function to visit and warm other pages' cache
 const otherPagesToBeWarmed = async (page) => {
@@ -106,7 +107,6 @@ const warmProductCache = async () => {
   }
 
   console.log(`✅ Found ${allIds.length} products. Warming cache...`);
-
   // const chromiumPath = path.join(
   //   process.env.GITHUB_WORKSPACE,
   //   "chromium/chrome-linux/chrome"
@@ -116,7 +116,7 @@ const warmProductCache = async () => {
   const browser = await puppeteer.launch({
     headless: true,
     args: chromium.args, // Use chromium's args for Render environment
-    executablePath: '/opt/render/project/.chromium/chrome-linux/chrome', // Get the path to Chromium bundled with chrome-aws-lambda
+    executablePath: await chromium.executablePath(), // Get the path to Chromium bundled with chrome-aws-lambda
     userDataDir: './tmp', // Temporary directory for user data
   });
 
