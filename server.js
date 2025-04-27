@@ -1,22 +1,18 @@
-const puppeteer = require("puppeteer-core"); // Keep puppeteer-core
+const puppeteerExtra = require("puppeteer-extra");
+const puppeteerCore = require("puppeteer-core");
+const puppeteerExtraPluginStealth = require("puppeteer-extra-plugin-stealth");
 const axios = require("axios");
 const cron = require("node-cron");
-const express = require("express"); // Import Express
-const path = require("path"); // Import path module
-const app = express();
+const path = require("path");
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
   "cfd13620d7a93c932643d3d1221b56328c1da5a98e3600a234ad9a0d92fc0bc0";
 
-// Add a simple route to make sure the server is responding on the specified port
-app.get("/", (req, res) => {
-  res.send("Cache Warmer Service is Running!");
-});
+// Apply the stealth plugin to puppeteer-extra
+puppeteerExtra.use(puppeteerExtraPluginStealth());
 
-// Set the port dynamically using environment variable or default to 3000 for local testing
-
-const PORT = process.env.PORT || 3000;
+// Function to visit and warm other pages' cache
 const otherPagesToBeWarmed = async (page) => {
   const pagesToWarm = [
     "https://www.winters.lat/productos/eventos",
@@ -30,20 +26,43 @@ const otherPagesToBeWarmed = async (page) => {
     for (const url of pagesToWarm) {
       try {
         console.log(`🚀 Visiting page: ${url}`);
+
+        // Set request interception with proper headers **before** navigating
+        await page.setRequestInterception(true);
+        page.on("request", (request) => {
+          if (request.url().includes("api.winters.lat")) {
+            const modifiedHeaders = Object.assign({}, request.headers(), {
+              "Cache-Control":
+                "public, max-age=300, s-maxage=300, stale-while-revalidate=999999999999999999999999", // Cache-Control header
+              Vary: "Origin, Accept-Encoding", // Vary header
+              Referer: "https://www.winters.lat", // Referer header
+              Origin: "https://www.winters.lat", // Origin header
+            });
+            request.continue({ headers: modifiedHeaders });
+          } else {
+            request.continue(); // Continue without modifying headers for other requests
+          }
+        });
+
+        // Now go to the page with the cache control headers
         await page.goto(url, {
-          waitUntil: "networkidle2",
-          timeout: 20000, // 10 seconds timeout
+          waitUntil: "networkidle2", // Ensure that the page finishes loading
+          timeout: 20000, // 20 seconds timeout
         });
         console.log(`✅ Cache warmed for page: ${url}`);
       } catch (err) {
         console.error(`Error warming cache for page ${url}:`, err.message);
       }
+
+      // Add a 2-second interval between requests
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
     }
   } catch (err) {
     console.error("Error in warming other pages cache:", err.message);
   }
 };
 
+// Function to warm product cache
 const warmProductCache = async () => {
   let allIds = [];
   let allSlugs = [];
@@ -86,55 +105,52 @@ const warmProductCache = async () => {
 
   console.log(`✅ Found ${allIds.length} products. Warming cache...`);
 
-  // Launch Puppeteer with the correct executablePath
-  const browser = await puppeteer.launch({
+  const chromiumPath = path.join(
+    process.env.GITHUB_WORKSPACE,
+    "chromium/chrome-linux/chrome"
+  );
+  
+  // Launch Puppeteer with stealth plugin
+  const browser = await puppeteerExtra.launch({
     headless: true,
-    executablePath: process.env.CHROME_PATH, // <- Use the env variable!
+    executablePath: chromiumPath,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-
   const page = await browser.newPage();
 
+  // Set request interception **before** navigating to ensure all requests are captured
   await page.setRequestInterception(true);
   page.on("request", (request) => {
-    const modifiedHeaders = Object.assign({}, request.headers(), {
-      "Cache-Control":
-        "public, max-age=60, s-maxage=60, stale-while-revalidate=999999999999999999999999",
-    });
-    request.continue({ headers: modifiedHeaders });
+    if (request.url().includes("api.winters.lat")) {
+      // Modify headers only for URLs that include www.winters.lat
+      const modifiedHeaders = Object.assign({}, request.headers(), {
+        "Cache-Control":
+          "public, max-age=300, s-maxage=300, stale-while-revalidate=999999999999999999999999", // Cache-Control header
+        Referer: "https://www.winters.lat", // Referer header
+      });
+      request.continue({ headers: modifiedHeaders });
+    } else {
+      request.continue(); // Continue without modifying headers for other requests
+    }
   });
 
-  for (let i = 0; i < allIds.length; i++) {
-    const id = allIds[i];
-    const slug = allSlugs[i];
-    const productUrl = `https://www.winters.lat/productos/${slug}`;
+  // Warm cache for each product slug
+  for (const slug of allSlugs) {
     try {
-      console.log(`🚀 Visiting product page: ${productUrl}`);
-      await page.goto(productUrl, {
+      await page.goto(`https://www.winters.lat/productos/${slug}`, {
         waitUntil: "networkidle2",
-        timeout: 20000, // 10 seconds timeout
+        timeout: 20000,
       });
-      console.log(`✅ Cache warmed for product: ${productUrl}`);
+      console.log(`✅ Cache warmed for product: ${slug}`);
     } catch (err) {
-      console.error(
-        `Error warming cache for product ${productUrl}:`,
-        err.message
-      );
+      console.error(`Error warming cache for product ${slug}:`, err.message);
     }
+
+    // Add a 2-second interval between requests
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
   }
 
   await browser.close();
 };
 
-// Cron job to run every 6 hours
-cron.schedule("0 */6 * * *", () => {
-  console.log("Running cache warmer every 6 hours...");
-  warmProductCache();
-  otherPagesToBeWarmed();
-});
-
-// EXECUTE IMMEDATLEY FOR TESTING
-(async () => {
-  console.log("Executing immediately for testing...");
-  await warmProductCache();
-  await otherPagesToBeWarmed();
-})();
+module.exports = { warmProductCache, otherPagesToBeWarmed };
