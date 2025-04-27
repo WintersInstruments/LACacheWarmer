@@ -122,7 +122,7 @@ const warmProductCache = async () => {
   // );
 
   // Launch Puppeteer with stealth plugin
-  const browser = await puppeteer.launch({
+  const browser = await puppeteer({
     headless: true,
     args: chromium.args, // Use chromium's args for Render environment
     executablePath: await chromium.executablePath(), // Get the path to Chromium bundled with chrome-aws-lambda
