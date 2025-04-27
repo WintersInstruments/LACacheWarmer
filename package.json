@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@sparticuz/chromium": "^133.0.0",
+    "@sparticuz/chromium": "901912",
     "axios": "^1.0.0",
     "chrome-aws-lambda": "^10.1.0",
     "express": "^5.1.0",
