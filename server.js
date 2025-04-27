@@ -111,12 +111,10 @@ const warmProductCache = async () => {
   //   "chromium/chrome-linux/chrome"
   // );
 
-  const chromiumPath = "/opt/render/project/.chromium/chrome-linux/chrome"; 
-
   // Launch Puppeteer with stealth plugin
   const browser = await puppeteerExtra.launch({
     headless: true,
-    executablePath: chromiumPath,
+    executablePath: process.env.CHROME_PATH,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
