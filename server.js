@@ -188,7 +188,7 @@ app.listen(3000, () => console.log("Server is running on port 3000"));
 
 // Call the warming functions immediately for testing
 (async () => {
-  const browser = await puppeteerExtra.launch({
+  const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
