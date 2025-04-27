@@ -116,7 +116,7 @@ const warmProductCache = async () => {
   const browser = await puppeteer.launch({
     headless: true,
     args: chromium.args, // Use chromium's args for Render environment
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // Get the path to Chromium bundled with chrome-aws-lambda
+    executablePath: '/opt/render/project/.chromium/chrome-linux/chrome', // Get the path to Chromium bundled with chrome-aws-lambda
     userDataDir: './tmp', // Temporary directory for user data
   });
 
