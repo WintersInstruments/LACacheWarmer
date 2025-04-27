@@ -5,7 +5,7 @@ const axios = require("axios");
 const cron = require("node-cron");
 const path = require("path");
 const express = require("express");
-const chromium = require('chrome-aws-lambda');
+const chromium = require('@sparticuz/chromium'); // Replacing chrome-aws-lambda with sparticuz chromium
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
