@@ -5,6 +5,7 @@ const axios = require("axios");
 const cron = require("node-cron");
 const path = require("path");
 const express = require("express");
+const chromium = require('chrome-aws-lambda');
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
@@ -112,10 +113,11 @@ const warmProductCache = async () => {
   // );
 
   // Launch Puppeteer with stealth plugin
-  const browser = await puppeteerExtra.launch({
+  const browser = await puppeteer.launch({
     headless: true,
-    executablePath: process.env.CHROME_PATH,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    userDataDir: './tmp', // Temporary directory for user data
   });
   const page = await browser.newPage();
 
