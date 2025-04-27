@@ -14,16 +14,6 @@ const allProductsQuery =
 // Apply the stealth plugin to puppeteer-extra
 puppeteer.use(puppeteerExtraPluginStealth());
 
-const fs = require('fs');
-const chromiumPath = '/tmp/chromium';
-
-if (fs.existsSync(chromiumPath)) {
-  console.log(`Chromium is found at: ${chromiumPath}`);
-} else {
-  console.log(`Chromium NOT found at: ${chromiumPath}`);
-}
-
-
 // Function to visit and warm other pages' cache
 const otherPagesToBeWarmed = async (page) => {
   const pagesToWarm = [
