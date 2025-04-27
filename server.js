@@ -12,7 +12,7 @@ const allProductsQuery =
   "cfd13620d7a93c932643d3d1221b56328c1da5a98e3600a234ad9a0d92fc0bc0";
 
 // Apply the stealth plugin to puppeteer-extra
-puppeteerExtra.use(puppeteerExtraPluginStealth());
+puppeteer.use(puppeteerExtraPluginStealth());
 
 const fs = require('fs');
 const chromiumPath = '/tmp/chromium';
