@@ -13,7 +13,6 @@ const allProductsQuery =
 
 // Apply the stealth plugin to puppeteer-extra
 puppeteerExtra.use(puppeteerExtraPluginStealth());
-console.log(await chromium.executablePath())
 
 // Function to visit and warm other pages' cache
 const otherPagesToBeWarmed = async (page) => {
