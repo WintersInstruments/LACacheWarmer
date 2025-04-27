@@ -1,11 +1,10 @@
 const puppeteer = require("puppeteer-extra");
-const puppeteerCore = require("puppeteer-core");
 const puppeteerExtraPluginStealth = require("puppeteer-extra-plugin-stealth");
 const axios = require("axios");
 const cron = require("node-cron");
 const path = require("path");
 const express = require("express");
-const chromium = require('@sparticuz/chromium'); // Replacing chrome-aws-lambda with sparticuz chromium
+const chromium = require('@sparticuz/chromium'); 
 
 const graphQLendpoint = "https://api.winters.lat/graphql";
 const allProductsQuery =
